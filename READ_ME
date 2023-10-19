@@ -1,0 +1,20 @@
+Club Card Status Management Program
+This C++ program provides a system for managing and processing discount cards for a computer club fundraiser. Each club card is assigned a unique ID, and these cards can exist in one of four status lists: Active, Dead, Watch, or Fraud. The program reads existing "dead" card IDs from a file called "dead.txt" and offers a user-friendly menu for various card management tasks.
+
+Features
+Activate a new club card.
+Disable a lost or stolen club card.
+Report suspicious activity on a card.
+Display card IDs for each of the four status lists: Active, Dead, Watch, and Fraud.
+
+Usage
+A - Activate a new card.
+D - Disable a lost or stolen card.
+S - Report suspicious activity.
+E - Exit the program.
+Please note that invalid actions will result in warning messages.
+
+Files
+main.cpp: The main program.
+ArrayBag.cpp and ArrayBag.h: Class files for the ArrayBag data structure.
+BagInterface.h: Interface for the Bag ADT.
