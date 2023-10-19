@@ -1,0 +1,148 @@
+//  This program stores the club cards in one of four statuses: active, dead,
+//  watch, or fraud
+//  The user is able to activate a new card, disable, 
+//  and report the suspicious use
+//  Input from standard input and dead.txt file
+//  Output with standard output
+#include <iostream>
+#include <string>
+#include <cctype>
+#include "ArrayBag.h"
+#include <fstream>
+using namespace std;
+
+bool validId(string id);
+
+void displayBag(ArrayBag<string>& bag)
+{
+   cout << " contains " << bag.getCurrentSize()
+        << " items:" << endl;
+   vector<string> bagItems = bag.toVector();
+   int numberOfEntries = (int)bagItems.size();
+   for (int i = 0; i < numberOfEntries; i++)
+   {
+      cout << bagItems[i] << " ";
+   }  // end for
+   cout << endl << endl;
+}  // end displayBag
+
+int main(){
+  string cardId;  //a unique ID in the LDD(upper-case letter and two digits)
+   ArrayBag<string> activeCards, deadCards, watchCards, fraudCards;
+   ifstream readInput;
+   readInput.open("dead.txt");
+   while(readInput >> cardId) {//read the whole file
+    if(validId(cardId)) //add only valid dead cards to the list
+    deadCards.add(cardId); 
+	}
+   readInput.close();
+   int suspiciousUse = 0;  //count the suspicious card use
+  char choice;
+   do{
+   cout << "Please select one choice from the menu: " << endl;
+   cout << " A - Activate a new card " << endl;
+   cout << " D - Disable a lost or stolen card " << endl;
+   cout << " S - Report suspicious activity " << endl;
+   cout << " E - Exit " << endl;
+   cin >> choice;
+   switch(choice) {
+    case 'A':
+    case 'a':
+     cout << "Enter the unique ID in LDD(Upper-Case Letter and 2 digits)";
+     cout << "format:" << endl;
+     cin >> cardId;
+     if(validId(cardId))
+// check if the card is not already on any of the lists
+      if(!activeCards.contains(cardId) && !deadCards.contains(cardId) &&
+        !watchCards.contains(cardId) && !fraudCards.contains(cardId)) {
+	  activeCards.add(cardId);
+          cout << "Card is successfully activated. " << endl;
+      }
+      else {
+        cout << "The Id is already in some List. " << endl;
+      }
+      else {
+      cout << "The Id doesn't have the right format." << endl;
+     }
+     break;
+
+    case 'D':
+    case 'd':
+    cout << "Enter the unique ID in LLD(Upper-Case Letter and 2 digits)"<<endl;
+     cout << "format to disable a lost or stolen card: " << endl;
+     cin >> cardId;
+     if(validId(cardId)){
+//check if the card is valid, exists, or is already in dead or fraud lists
+      if(activeCards.contains(cardId) && !deadCards.contains(cardId) && 
+        !fraudCards.contains(cardId)) {
+        if(activeCards.remove(cardId)) {
+        deadCards.add(cardId);
+        cout << "Card has been successfully disabled." << endl;
+        }else{
+	cout << "Card is not found in the active cards list." << endl;
+      }
+      }else {
+      cout << "Card doesn't exist or card has been found either in";
+      cout << " the dead or fraud list. " << endl;
+	}
+      }else {
+     cout << "The Id doesn't have the right format." << endl;
+     }     
+	break;
+
+    case 'S':
+    case 's':
+       cout<<"Enter the unique ID in LDD(Upper-Case Letter and 2 digits)";
+       cout<<"format to report suspicious activity: " << endl;
+       cin >>cardId;
+       if(validId(cardId)&& activeCards.contains(cardId) &&
+	   !deadCards.contains(cardId) && !fraudCards.contains(cardId)&&
+	   !watchCards.contains(cardId)){
+	   activeCards.remove(cardId);
+	   watchCards.add(cardId);
+           cout<<"Card has been successfully added to the Watch list." <<endl;
+           suspiciousUse++;
+	}
+	else if(watchCards.contains(cardId)) {
+            if(suspiciousUse >= 1){
+             watchCards.remove(cardId);
+             fraudCards.add(cardId);
+             cout << "Card has been added to the fraud list";
+             cout << " since it has been used suspiciously twice." << endl;
+            suspiciousUse = 0;
+	   }
+	}else{
+         cout << "The card Id is not on the right format,the card doesn't exist," << endl;
+         cout << "or the card is already in the Dead or Fraud list." << endl;
+	 }	 
+	break;
+
+    case 'E':
+    case 'e':
+//display card Ids for each list
+	cout << "Active list";
+	displayBag(activeCards);
+	cout<< "Dead list";
+	displayBag(deadCards);
+	cout<<"Watch List";
+	displayBag(watchCards);
+	cout<<"Fraud List";
+	displayBag(fraudCards);
+	break;
+
+    default:
+	cout << "Invalid choice. Please try again." << endl;
+    }//end of switch
+  }//end of do statement
+  while (choice!='E' && choice!='e');
+   return 0;
+} // end main
+
+
+bool validId(string id) {
+if (id.length() == 3 && isupper(id[0]) && isdigit(id[1]) && isdigit(id[2]) ) 
+ return true;
+else 
+ return false;
+
+}
